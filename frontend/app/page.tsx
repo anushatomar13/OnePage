@@ -1,11 +1,13 @@
 import { AmbientBackground } from "@/components/ambient-background";
-import { Splash } from "@/components/splash";
+import { SiteHeader } from "@/components/site-header";
+import { Landing } from "@/components/landing/landing";
 
 export default function Home() {
   return (
     <>
       <AmbientBackground />
-      <Splash />
+      <SiteHeader />
+      <Landing />
     </>
   );
 }
