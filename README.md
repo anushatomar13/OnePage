@@ -41,10 +41,16 @@ Tokens live in [`frontend/app/globals.css`](frontend/app/globals.css).
 ## Roadmap
 
 - [x] **Phase 1** — Foundation & design system
-- [ ] **Phase 2** — Landing + resume upload
-- [ ] **Phase 3** — Backend: parsing + AI extraction
-- [ ] **Phase 4** — Processing experience
-- [ ] **Phase 5** — Portfolio sections (Hero, Education, Experience)
-- [ ] **Phase 6** — Portfolio sections (Projects, Skills, Achievements, Contact, Thank You)
-- [ ] **Phase 7** — Editor
-- [ ] **Phase 8** — Export, deploy & polish
+- [x] **Phase 2** — Landing + resume upload
+- [x] **Phase 3** — Backend: parsing + AI extraction
+- [x] **Phase 4** — Processing experience
+- [x] **Phase 5** — Portfolio sections (Hero, Education, Experience)
+- [x] **Phase 6** — Portfolio sections (Projects, Skills, Achievements, Contact, Thank You)
+- [x] **Phase 7** — Editor (inline text, theming, section reorder/hide)
+- [x] **Phase 8** — Export (HTML / Next.js source / JSON), deploy & polish
+
+## Export
+
+From the preview, **Export** offers: a self-contained **HTML** file, a clean
+**Next.js 15** source project (`.zip`), and the structured **resume JSON** — plus
+a one-click path to deploy on Vercel.
