@@ -1,0 +1,14 @@
+# Web
+fastapi>=0.115
+uvicorn[standard]>=0.32
+python-multipart>=0.0.12
+pydantic>=2.9
+pydantic-settings>=2.6
+
+# Resume parsing
+pymupdf>=1.24
+python-docx>=1.1
+
+# AI providers (optional at runtime — pipeline degrades gracefully without keys)
+openai>=1.54
+google-genai>=0.3
