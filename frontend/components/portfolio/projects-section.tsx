@@ -3,11 +3,14 @@
 import { ArrowUpRight } from "lucide-react";
 import type { Portfolio, Project } from "@/lib/types";
 import { SECTION_META } from "@/lib/sections";
+import { useAppStore } from "@/lib/store";
+import { Editable } from "@/components/editor/editable";
 import { cn } from "@/lib/utils";
 import { GithubIcon } from "./brand-icons";
 import { Pill, Reveal, Section, SectionHeading } from "./primitives";
 
-function ProjectCard({ p }: { p: Project }) {
+function ProjectCard({ p, i }: { p: Project; i: number }) {
+  const update = useAppStore((s) => s.updatePortfolio);
   return (
     <div className="glass group flex h-full flex-col overflow-hidden rounded-2xl transition-all duration-300 hover:-translate-y-1 hover:border-border-strong">
       {/* Stylized image placeholder (resumes rarely ship project imagery) */}
@@ -23,7 +26,13 @@ function ProjectCard({ p }: { p: Project }) {
 
       <div className="flex flex-1 flex-col p-6">
         <div className="flex items-start justify-between gap-3">
-          <h3 className="text-lg font-medium tracking-tight">{p.name}</h3>
+          <Editable
+            as="h3"
+            value={p.name}
+            placeholder="Project name"
+            className="text-lg font-medium tracking-tight"
+            onCommit={(v) => update((d) => void (d.projects[i].name = v))}
+          />
           <div className="flex shrink-0 items-center gap-1.5">
             {p.github && (
               <a
@@ -50,17 +59,23 @@ function ProjectCard({ p }: { p: Project }) {
           </div>
         </div>
 
-        {p.description && (
-          <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
-            {p.description}
-          </p>
-        )}
+        <Editable
+          as="p"
+          multiline
+          value={p.description}
+          placeholder="A short description…"
+          className="mt-2 text-sm leading-relaxed text-muted-foreground"
+          onCommit={(v) => update((d) => void (d.projects[i].description = v))}
+        />
 
         {p.tech && p.tech.length > 0 && (
           <div className="mt-auto flex flex-wrap gap-2 pt-4">
-            {p.tech.map((t) => (
-              <Pill key={t} className="text-xs">
-                {t}
+            {p.tech.map((t, k) => (
+              <Pill key={k} className="text-xs">
+                <Editable
+                  value={t}
+                  onCommit={(v) => update((d) => void (d.projects[i].tech![k] = v))}
+                />
               </Pill>
             ))}
           </div>
@@ -80,7 +95,7 @@ export function ProjectsSection({ portfolio }: { portfolio: Portfolio }) {
       <div className={cn("grid gap-6", projects.length > 1 && "sm:grid-cols-2")}>
         {projects.map((p, i) => (
           <Reveal key={p.id} delay={(i % 2) * 0.1}>
-            <ProjectCard p={p} />
+            <ProjectCard p={p} i={i} />
           </Reveal>
         ))}
       </div>

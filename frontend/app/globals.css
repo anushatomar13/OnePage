@@ -226,6 +226,30 @@
     color: transparent;
   }
 
+  /* Inline-editable text affordance (editor mode) */
+  .onepage-editable {
+    outline: 1px dashed transparent;
+    outline-offset: 3px;
+    border-radius: 6px;
+    cursor: text;
+    transition:
+      background 0.2s,
+      outline-color 0.2s;
+  }
+  .onepage-editable:hover {
+    outline-color: var(--border-strong);
+    background: color-mix(in oklch, var(--foreground) 4%, transparent);
+  }
+  .onepage-editable:focus {
+    outline: 1px solid var(--primary);
+    background: color-mix(in oklch, var(--foreground) 5%, transparent);
+  }
+  .onepage-editable:empty::before {
+    content: attr(data-placeholder);
+    color: var(--muted-foreground);
+    opacity: 0.5;
+  }
+
   /* Faint dot grid — premium technical backdrop */
   .bg-dot-grid {
     background-image: radial-gradient(
@@ -244,5 +268,14 @@
     pointer-events: none;
     opacity: 0.035;
     background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  }
+}
+
+/* Switchable heading typeface — driven by --font-display (set per theme).
+   Uses the next/font runtime variables (the @theme font tokens are inlined at
+   build time and aren't available as runtime CSS variables). */
+@layer components {
+  .font-display {
+    font-family: var(--font-display, var(--font-geist-sans));
   }
 }

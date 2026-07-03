@@ -5,6 +5,8 @@ import { ArrowDown, FileDown } from "lucide-react";
 import type { Portfolio } from "@/lib/types";
 import { Button } from "@/components/ui/button";
 import { Magnetic } from "@/components/magnetic";
+import { Editable } from "@/components/editor/editable";
+import { useAppStore } from "@/lib/store";
 import { Section } from "./primitives";
 import { SocialLinks } from "./social-links";
 
@@ -25,7 +27,7 @@ const PARTICLES = [
 function AnimatedName({ name }: { name: string }) {
   const words = name.split(" ");
   return (
-    <h1 className="text-display font-medium tracking-tight">
+    <h1 className="font-display text-display font-medium tracking-tight">
       {words.map((word, i) => (
         <span key={i} className="inline-block overflow-hidden pb-[0.1em] align-bottom">
           <motion.span
@@ -45,6 +47,8 @@ function AnimatedName({ name }: { name: string }) {
 
 export function HeroSection({ portfolio }: { portfolio: Portfolio }) {
   const { hero } = portfolio;
+  const editing = useAppStore((s) => s.editing);
+  const update = useAppStore((s) => s.updatePortfolio);
   const meta = [hero.role, hero.location].filter(Boolean).join("  ·  ");
 
   return (
@@ -68,28 +72,65 @@ export function HeroSection({ portfolio }: { portfolio: Portfolio }) {
       </div>
 
       <div className="relative max-w-4xl">
-        {meta && (
-          <motion.p
-            initial={{ opacity: 0, y: 12 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.7, ease }}
-            className="mb-6 font-mono text-eyebrow uppercase tracking-[0.22em] text-muted-foreground"
-          >
-            {meta}
-          </motion.p>
+        {editing ? (
+          <p className="mb-6 flex flex-wrap gap-x-2 font-mono text-eyebrow uppercase tracking-[0.22em] text-muted-foreground">
+            <Editable
+              value={hero.role}
+              placeholder="Role"
+              onCommit={(v) => update((p) => void (p.hero.role = v))}
+            />
+            <span aria-hidden>·</span>
+            <Editable
+              value={hero.location ?? ""}
+              placeholder="Location"
+              onCommit={(v) => update((p) => void (p.hero.location = v))}
+            />
+          </p>
+        ) : (
+          meta && (
+            <motion.p
+              initial={{ opacity: 0, y: 12 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.7, ease }}
+              className="mb-6 font-mono text-eyebrow uppercase tracking-[0.22em] text-muted-foreground"
+            >
+              {meta}
+            </motion.p>
+          )
         )}
 
-        <AnimatedName name={hero.name} />
+        {editing ? (
+          <Editable
+            as="h1"
+            value={hero.name}
+            placeholder="Your name"
+            className="font-display text-display font-medium tracking-tight"
+            onCommit={(v) => update((p) => void (p.hero.name = v))}
+          />
+        ) : (
+          <AnimatedName name={hero.name} />
+        )}
 
-        {hero.intro && (
-          <motion.p
-            initial={{ opacity: 0, y: 16 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.9, ease, delay: 0.45 }}
+        {editing ? (
+          <Editable
+            as="p"
+            multiline
+            value={hero.intro ?? ""}
+            placeholder="A short introduction…"
             className="mt-8 max-w-2xl text-balance text-lg leading-relaxed text-muted-foreground sm:text-xl"
-          >
-            {hero.intro}
-          </motion.p>
+            onCommit={(v) => update((p) => void (p.hero.intro = v))}
+          />
+        ) : (
+          hero.intro && (
+            <motion.p
+              initial={{ opacity: 0, y: 16 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.9, ease, delay: 0.45 }}
+              className="mt-8 max-w-2xl text-balance text-lg leading-relaxed text-muted-foreground sm:text-xl"
+            >
+              {hero.intro}
+            </motion.p>
+          )
         )}
 
         <motion.div

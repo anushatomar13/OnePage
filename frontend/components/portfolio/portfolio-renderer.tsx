@@ -2,7 +2,8 @@
 
 import { useEffect, useMemo, useRef, useState, type ComponentType } from "react";
 import type { Portfolio, SectionId } from "@/lib/types";
-import { SECTION_META } from "@/lib/sections";
+import { SECTION_META, sectionHasData } from "@/lib/sections";
+import { useAppStore } from "@/lib/store";
 import { PortfolioNav } from "./portfolio-nav";
 import { HeroSection } from "./hero-section";
 import { EducationSection } from "./education-section";
@@ -26,32 +27,18 @@ const SECTION_COMPONENTS: Record<SectionId, SectionComponent> = {
   thankyou: ThankYouSection,
 };
 
-function hasData(id: SectionId, p: Portfolio): boolean {
-  switch (id) {
-    case "education":
-      return p.education.length > 0;
-    case "experience":
-      return p.experience.length > 0;
-    case "projects":
-      return p.projects.length > 0;
-    case "skills":
-      return p.skills.length > 0;
-    case "achievements":
-      return p.achievements.length > 0;
-    // hero, contact, thankyou always render.
-    default:
-      return true;
-  }
-}
-
 export function PortfolioRenderer({ portfolio }: { portfolio: Portfolio }) {
   const containerRef = useRef<HTMLDivElement>(null);
   const [activeId, setActiveId] = useState<string>("hero");
   const [progress, setProgress] = useState(0);
+  const hidden = useAppStore((s) => s.hidden);
 
   const visible = useMemo(
-    () => portfolio.sectionOrder.filter((id) => hasData(id, portfolio)),
-    [portfolio],
+    () =>
+      portfolio.sectionOrder.filter(
+        (id) => sectionHasData(id, portfolio) && !hidden.includes(id),
+      ),
+    [portfolio, hidden],
   );
 
   // Track the section currently in view.

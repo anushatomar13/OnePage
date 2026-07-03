@@ -5,6 +5,8 @@ import type { LucideIcon } from "lucide-react";
 import type { AchievementKind, Portfolio } from "@/lib/types";
 import { SECTION_META } from "@/lib/sections";
 import { ArrowUpRight } from "lucide-react";
+import { useAppStore } from "@/lib/store";
+import { Editable } from "@/components/editor/editable";
 import { cn } from "@/lib/utils";
 import { Reveal, Section, SectionHeading } from "./primitives";
 
@@ -26,6 +28,7 @@ const KIND_LABEL: Record<AchievementKind, string> = {
 
 export function AchievementsSection({ portfolio }: { portfolio: Portfolio }) {
   const { achievements } = portfolio;
+  const update = useAppStore((s) => s.updatePortfolio);
 
   return (
     <Section id="achievements" center={false}>
@@ -45,7 +48,15 @@ export function AchievementsSection({ portfolio }: { portfolio: Portfolio }) {
                 </div>
                 <div className="min-w-0 flex-1">
                   <div className="flex items-start justify-between gap-2">
-                    <h3 className="font-medium leading-snug">{a.title}</h3>
+                    <Editable
+                      as="h3"
+                      value={a.title}
+                      placeholder="Title"
+                      className="font-medium leading-snug"
+                      onCommit={(v) =>
+                        update((p) => void (p.achievements[i].title = v))
+                      }
+                    />
                     {a.link && (
                       <a
                         href={a.link}
@@ -68,11 +79,16 @@ export function AchievementsSection({ portfolio }: { portfolio: Portfolio }) {
                       </span>
                     )}
                   </div>
-                  {a.description && (
-                    <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
-                      {a.description}
-                    </p>
-                  )}
+                  <Editable
+                    as="p"
+                    multiline
+                    value={a.description ?? ""}
+                    placeholder="Description (optional)"
+                    className="mt-2 text-sm leading-relaxed text-muted-foreground"
+                    onCommit={(v) =>
+                      update((p) => void (p.achievements[i].description = v))
+                    }
+                  />
                 </div>
               </div>
             </Reveal>
